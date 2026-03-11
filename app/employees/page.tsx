@@ -17,6 +17,22 @@ const ROLE_LABELS: Record<string, string> = {
   "giao-vien-hop-dong": "Giáo viên HĐ",
 };
 
+/** Thứ tự chuẩn: Hiệu trưởng -> Phó hiệu trưởng -> Giáo viên -> Kế toán -> Văn thư -> Giáo viên HĐ -> Bảo vệ */
+const ROLE_ORDER = [
+  "hieu-truong",
+  "pho-hieu-truong",
+  "giao-vien",
+  "ke-toan",
+  "van-thu",
+  "giao-vien-hop-dong",
+  "bao-ve",
+] as const;
+
+function roleSortIndex(role: string): number {
+  const idx = ROLE_ORDER.indexOf(role as (typeof ROLE_ORDER)[number]);
+  return idx === -1 ? 999 : idx;
+}
+
 type Employee = {
   _id: string;
   fullName: string;
@@ -170,7 +186,13 @@ export default function EmployeesPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {list.map((emp) => (
+                    {[...list]
+                      .sort((a, b) => {
+                        const byRole = roleSortIndex(a.role) - roleSortIndex(b.role);
+                        if (byRole !== 0) return byRole;
+                        return a.fullName.localeCompare(b.fullName, "vi");
+                      })
+                      .map((emp) => (
                       <tr
                         key={emp._id}
                         className="border-b border-stone-100 hover:bg-stone-50/50"
