@@ -247,7 +247,7 @@ export default function Page() {
   }
 
   const danhSachLoc = useMemo(() => {
-    return rows.filter((nv) => {
+    const filtered = rows.filter((nv) => {
       const hopLoai = boLoc === "all" ? true : nv.employeeType === boLoc;
       const q = tuKhoa.trim().toLowerCase();
       const hopTuKhoa =
@@ -256,6 +256,11 @@ export default function Page() {
           : nv.fullName.toLowerCase().includes(q) ||
             roleLabel(nv.role).toLowerCase().includes(q);
       return hopLoai && hopTuKhoa;
+    });
+    return [...filtered].sort((a, b) => {
+      const byRole = roleSortIndex(a.role) - roleSortIndex(b.role);
+      if (byRole !== 0) return byRole;
+      return a.fullName.localeCompare(b.fullName, "vi");
     });
   }, [boLoc, tuKhoa, rows]);
 
@@ -622,7 +627,7 @@ export default function Page() {
                 <ArrowLeft className="mr-2 h-4 w-4" /> Quay lại bảng điều khiển
               </Button>
               <h1 className="text-3xl font-semibold tracking-tight">
-                Hồ sơ nhân viên
+                Hồ sơ người lao động
               </h1>
               <p className="mt-2 text-sm text-stone-500">
                 Chỉnh mọi hệ số lương, phụ cấp, % TNNG, lương cơ bản và tạo
@@ -657,7 +662,9 @@ export default function Page() {
           <div className="grid gap-6 xl:grid-cols-[0.72fr_1.28fr]">
             <Card className="rounded-[28px] border-stone-200 bg-white/80 shadow-sm backdrop-blur">
               <CardHeader className="border-b border-stone-100 pb-4">
-                <CardTitle className="text-xl">Thông tin nhân viên</CardTitle>
+                <CardTitle className="text-xl">
+                  Thông tin người lao động
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 p-6">
                 <div className="rounded-3xl bg-stone-900 p-5 text-white">
@@ -722,7 +729,8 @@ export default function Page() {
                     Thông tin lương (chỉ xem)
                   </CardTitle>
                   <p className="text-sm text-stone-500">
-                    Hệ số, phụ cấp, BHXH và tổng hợp tính lương của nhân viên.
+                    Hệ số, phụ cấp, BHXH và tổng hợp tính lương của người lao
+                    động.
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-4 p-6">
@@ -849,8 +857,8 @@ export default function Page() {
                     Phiếu khấu trừ (chỉ xem)
                   </CardTitle>
                   <p className="text-sm text-stone-500">
-                    Các phiếu khấu trừ áp dụng cho nhân viên này. Để thêm/sửa,
-                    mở trang chỉnh sửa.
+                    Các phiếu khấu trừ áp dụng cho người lao động này. Để
+                    thêm/sửa, mở trang chỉnh sửa.
                   </p>
                 </CardHeader>
                 <CardContent className="p-6">
@@ -898,7 +906,7 @@ export default function Page() {
                       href={`/employee/${nv.employeeId}`}
                       className="flex items-center justify-center gap-2 text-white"
                     >
-                      Mở trang chỉnh sửa nhân viên
+                      Mở trang chỉnh sửa người lao động
                       <ChevronRight className="h-4 w-4" />
                     </Link>
                   </Button>
@@ -1011,7 +1019,7 @@ export default function Page() {
                       }
                       className="h-11 rounded-2xl bg-stone-900 text-white hover:bg-stone-800"
                     >
-                      Mở hồ sơ nhân viên đang chọn
+                      Mở hồ sơ người lao động đang chọn
                     </Button>
                     <Button
                       variant="outline"
@@ -1360,7 +1368,7 @@ export default function Page() {
                           moHoSoNhanVien(nhanVienDangChon.employeeId)
                         }
                       >
-                        Mở hồ sơ nhân viên để chỉnh sửa
+                        Mở hồ sơ người lao động để chỉnh sửa
                       </Button>
                     </div>
                   ) : (

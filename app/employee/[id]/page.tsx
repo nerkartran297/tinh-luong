@@ -133,8 +133,12 @@ export default function EmployeeEditPage() {
   const [employee, setEmployee] = useState<Employee | null>(null);
   const [profile, setProfile] = useState<ProfilePayload | null>(null);
   const [form, setForm] = useState<ProfileForm>(defaultProfile);
-  const [displayStrs, setDisplayStrs] = useState<Partial<Record<string, string>>>({});
-  const [preferentialPercent, setPreferentialPercent] = useState<0 | 50 | 70>(50);
+  const [displayStrs, setDisplayStrs] = useState<
+    Partial<Record<string, string>>
+  >({});
+  const [preferentialPercent, setPreferentialPercent] = useState<0 | 50 | 70>(
+    50,
+  );
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -159,7 +163,9 @@ export default function EmployeeEditPage() {
       try {
         const [empRes, profileRes] = await Promise.all([
           fetch(`/api/employees/${id}`, { credentials: "include" }),
-          fetch(`/api/employees/${id}/payroll-profile`, { credentials: "include" }),
+          fetch(`/api/employees/${id}/payroll-profile`, {
+            credentials: "include",
+          }),
         ]);
         const empData = await empRes.json();
         const profileData = await profileRes.json();
@@ -180,7 +186,7 @@ export default function EmployeeEditPage() {
           const d50 = Math.abs(stored - val50);
           const d70 = Math.abs(stored - val70);
           setPreferentialPercent(
-            d0 <= d50 && d0 <= d70 ? 0 : d50 <= d70 ? 50 : 70
+            d0 <= d50 && d0 <= d70 ? 0 : d50 <= d70 ? 50 : 70,
           );
           setDisplayStrs({
             salaryCoefficient:
@@ -192,7 +198,9 @@ export default function EmployeeEditPage() {
                 ? ""
                 : String(nextForm.positionAllowance),
             regionAllowance:
-              nextForm.regionAllowance === 0 ? "" : String(nextForm.regionAllowance),
+              nextForm.regionAllowance === 0
+                ? ""
+                : String(nextForm.regionAllowance),
             pctnvk: nextForm.pctnvk === 0 ? "" : String(nextForm.pctnvk),
             seniorityAllowance:
               nextForm.seniorityAllowance === 0
@@ -201,11 +209,11 @@ export default function EmployeeEditPage() {
             teachingSeniorityPercent:
               nextForm.teachingSeniorityPercent == null
                 ? ""
-                : String((nextForm.teachingSeniorityPercent * 100)),
+                : String(nextForm.teachingSeniorityPercent * 100),
             insurancePercent:
               nextForm.insurancePercent == null
                 ? ""
-                : String((nextForm.insurancePercent * 100)),
+                : String(nextForm.insurancePercent * 100),
           });
         } else {
           setForm(toForm(null));
@@ -244,7 +252,9 @@ export default function EmployeeEditPage() {
   async function refetchProfile() {
     if (!id) return;
     try {
-      const profileRes = await fetch(`/api/employees/${id}/payroll-profile`, { credentials: "include" });
+      const profileRes = await fetch(`/api/employees/${id}/payroll-profile`, {
+        credentials: "include",
+      });
       const profileData = await profileRes.json();
       if (profileData?.success && profileData?.data != null) {
         setProfile(profileData.data);
@@ -344,26 +354,34 @@ export default function EmployeeEditPage() {
         const d50 = Math.abs(stored - val50);
         const d70 = Math.abs(stored - val70);
         setPreferentialPercent(
-          d0 <= d50 && d0 <= d70 ? 0 : d50 <= d70 ? 50 : 70
+          d0 <= d50 && d0 <= d70 ? 0 : d50 <= d70 ? 50 : 70,
         );
         setDisplayStrs({
           salaryCoefficient:
-            nextForm.salaryCoefficient === 0 ? "" : String(nextForm.salaryCoefficient),
+            nextForm.salaryCoefficient === 0
+              ? ""
+              : String(nextForm.salaryCoefficient),
           positionAllowance:
-            nextForm.positionAllowance === 0 ? "" : String(nextForm.positionAllowance),
+            nextForm.positionAllowance === 0
+              ? ""
+              : String(nextForm.positionAllowance),
           regionAllowance:
-            nextForm.regionAllowance === 0 ? "" : String(nextForm.regionAllowance),
+            nextForm.regionAllowance === 0
+              ? ""
+              : String(nextForm.regionAllowance),
           pctnvk: nextForm.pctnvk === 0 ? "" : String(nextForm.pctnvk),
           seniorityAllowance:
-            nextForm.seniorityAllowance === 0 ? "" : String(nextForm.seniorityAllowance),
+            nextForm.seniorityAllowance === 0
+              ? ""
+              : String(nextForm.seniorityAllowance),
           teachingSeniorityPercent:
             nextForm.teachingSeniorityPercent == null
               ? ""
-              : String((nextForm.teachingSeniorityPercent * 100)),
+              : String(nextForm.teachingSeniorityPercent * 100),
           insurancePercent:
             nextForm.insurancePercent == null
               ? ""
-              : String((nextForm.insurancePercent * 100)),
+              : String(nextForm.insurancePercent * 100),
         });
       } else {
         setError(data?.message || "Lưu thất bại.");
@@ -380,7 +398,9 @@ export default function EmployeeEditPage() {
       const next = { ...prev, [key]: value };
       if (
         preferentialPercent != null &&
-        (key === "salaryCoefficient" || key === "positionAllowance" || key === "pctnvk")
+        (key === "salaryCoefficient" ||
+          key === "positionAllowance" ||
+          key === "pctnvk")
       ) {
         const base =
           (next.salaryCoefficient ?? 0) +
@@ -393,8 +413,13 @@ export default function EmployeeEditPage() {
   }
 
   function updateDecimal(
-    key: "salaryCoefficient" | "positionAllowance" | "regionAllowance" | "pctnvk" | "seniorityAllowance",
-    raw: string
+    key:
+      | "salaryCoefficient"
+      | "positionAllowance"
+      | "regionAllowance"
+      | "pctnvk"
+      | "seniorityAllowance",
+    raw: string,
   ) {
     setDisplayStrs((s) => ({ ...s, [key]: raw }));
     const n = raw === "" ? 0 : parseFloat(raw);
@@ -405,7 +430,7 @@ export default function EmployeeEditPage() {
 
   function updatePercent(
     key: "teachingSeniorityPercent" | "insurancePercent",
-    raw: string
+    raw: string,
   ) {
     setDisplayStrs((s) => ({ ...s, [key]: raw }));
     const n = raw === "" ? 0 : parseFloat(raw);
@@ -434,7 +459,9 @@ export default function EmployeeEditPage() {
   if (error && !employee) {
     return (
       <div className="min-h-screen bg-[#f6f3ee] p-6">
-        <p className="text-rose-600">{error || "Không tìm thấy nhân viên."}</p>
+        <p className="text-rose-600">
+          {error || "Không tìm thấy người lao động."}
+        </p>
         <Link href="/">
           <Button variant="outline" className="mt-4 rounded-2xl">
             Về bảng điều khiển
@@ -452,7 +479,8 @@ export default function EmployeeEditPage() {
         totalCoefficient: profile.totalCoefficient ?? 0,
         grossSalary: profile.grossSalary ?? 0,
         insuranceAmount: profile.insuranceAmount ?? 0,
-        otherDeduction: (profile as { otherDeduction?: number }).otherDeduction ?? 0,
+        otherDeduction:
+          (profile as { otherDeduction?: number }).otherDeduction ?? 0,
         netSalary: profile.netSalary ?? 0,
       }
     : null;
@@ -472,10 +500,11 @@ export default function EmployeeEditPage() {
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">
-              Chỉnh sửa hồ sơ nhân viên
+              Chỉnh sửa hồ sơ người lao động
             </h1>
             <p className="mt-1 text-sm text-stone-500">
-              Cấu hình lương, phụ cấp, BHXH. Các ô tính toán (cộng hệ số, thành tiền, thực nhận) cập nhật sau khi lưu.
+              Cấu hình lương, phụ cấp, BHXH. Các ô tính toán (cộng hệ số, thành
+              tiền, thực nhận) cập nhật sau khi lưu.
             </p>
           </div>
           <Button
@@ -503,11 +532,15 @@ export default function EmployeeEditPage() {
             <CardContent className="space-y-3 text-sm">
               <div>
                 <p className="text-stone-500">Họ tên</p>
-                <p className="font-medium text-stone-900">{employee?.fullName ?? "—"}</p>
+                <p className="font-medium text-stone-900">
+                  {employee?.fullName ?? "—"}
+                </p>
               </div>
               <div>
                 <p className="text-stone-500">Chức vụ</p>
-                <p className="font-medium">{employee ? roleLabel(employee.role) : "—"}</p>
+                <p className="font-medium">
+                  {employee ? roleLabel(employee.role) : "—"}
+                </p>
               </div>
               <div>
                 <p className="text-stone-500">Mã NV</p>
@@ -516,7 +549,10 @@ export default function EmployeeEditPage() {
               <div>
                 <p className="text-stone-500">Loại hồ sơ</p>
                 {employee && (
-                  <Badge variant="secondary" className={`rounded-full ${nhanLoai[empType]?.mau ?? ""}`}>
+                  <Badge
+                    variant="secondary"
+                    className={`rounded-full ${nhanLoai[empType]?.mau ?? ""}`}
+                  >
                     {nhanLoai[empType]?.nhan ?? empType}
                   </Badge>
                 )}
@@ -529,7 +565,8 @@ export default function EmployeeEditPage() {
             <CardHeader>
               <CardTitle className="text-xl">Hồ sơ lương</CardTitle>
               <p className="text-sm text-stone-500">
-                Chỉnh các hệ số, phụ cấp, BHXH. Với biên chế: dùng lương cơ bản × cộng hệ số. Với HĐ/bảo vệ: có thể nhập trực tiếp lương gộp.
+                Chỉnh các hệ số, phụ cấp, BHXH. Với biên chế: dùng lương cơ bản
+                × cộng hệ số. Với HĐ/bảo vệ: có thể nhập trực tiếp lương gộp.
               </p>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -540,7 +577,9 @@ export default function EmployeeEditPage() {
                     type="number"
                     min={0}
                     value={form.salaryBase || ""}
-                    onChange={(e) => update("salaryBase", Number(e.target.value) || 0)}
+                    onChange={(e) =>
+                      update("salaryBase", Number(e.target.value) || 0)
+                    }
                     className="rounded-xl"
                   />
                 </div>
@@ -552,8 +591,15 @@ export default function EmployeeEditPage() {
                       <Input
                         type="text"
                         inputMode="decimal"
-                        value={displayStrs.salaryCoefficient ?? (form.salaryCoefficient === 0 ? "" : String(form.salaryCoefficient))}
-                        onChange={(e) => updateDecimal("salaryCoefficient", e.target.value)}
+                        value={
+                          displayStrs.salaryCoefficient ??
+                          (form.salaryCoefficient === 0
+                            ? ""
+                            : String(form.salaryCoefficient))
+                        }
+                        onChange={(e) =>
+                          updateDecimal("salaryCoefficient", e.target.value)
+                        }
                         className="rounded-xl"
                       />
                     </div>
@@ -562,8 +608,15 @@ export default function EmployeeEditPage() {
                       <Input
                         type="text"
                         inputMode="decimal"
-                        value={displayStrs.positionAllowance ?? (form.positionAllowance === 0 ? "" : String(form.positionAllowance))}
-                        onChange={(e) => updateDecimal("positionAllowance", e.target.value)}
+                        value={
+                          displayStrs.positionAllowance ??
+                          (form.positionAllowance === 0
+                            ? ""
+                            : String(form.positionAllowance))
+                        }
+                        onChange={(e) =>
+                          updateDecimal("positionAllowance", e.target.value)
+                        }
                         className="rounded-xl"
                       />
                     </div>
@@ -572,8 +625,15 @@ export default function EmployeeEditPage() {
                       <Input
                         type="text"
                         inputMode="decimal"
-                        value={displayStrs.regionAllowance ?? (form.regionAllowance === 0 ? "" : String(form.regionAllowance))}
-                        onChange={(e) => updateDecimal("regionAllowance", e.target.value)}
+                        value={
+                          displayStrs.regionAllowance ??
+                          (form.regionAllowance === 0
+                            ? ""
+                            : String(form.regionAllowance))
+                        }
+                        onChange={(e) =>
+                          updateDecimal("regionAllowance", e.target.value)
+                        }
                         className="rounded-xl"
                       />
                     </div>
@@ -582,8 +642,13 @@ export default function EmployeeEditPage() {
                       <Input
                         type="text"
                         inputMode="decimal"
-                        value={displayStrs.pctnvk ?? (form.pctnvk === 0 ? "" : String(form.pctnvk))}
-                        onChange={(e) => updateDecimal("pctnvk", e.target.value)}
+                        value={
+                          displayStrs.pctnvk ??
+                          (form.pctnvk === 0 ? "" : String(form.pctnvk))
+                        }
+                        onChange={(e) =>
+                          updateDecimal("pctnvk", e.target.value)
+                        }
                         className="rounded-xl"
                       />
                     </div>
@@ -602,7 +667,7 @@ export default function EmployeeEditPage() {
                             value={String(preferentialPercent)}
                             onValueChange={(v) =>
                               setPreferentialAndUpdate(
-                                v === "0" ? 0 : v === "70" ? 70 : 50
+                                v === "0" ? 0 : v === "70" ? 70 : 50,
                               )
                             }
                           >
@@ -610,9 +675,7 @@ export default function EmployeeEditPage() {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="0">
-                                0% — {preview0}
-                              </SelectItem>
+                              <SelectItem value="0">0% — {preview0}</SelectItem>
                               <SelectItem value="50">
                                 50% — {preview50}
                               </SelectItem>
@@ -629,8 +692,15 @@ export default function EmployeeEditPage() {
                       <Input
                         type="text"
                         inputMode="decimal"
-                        value={displayStrs.seniorityAllowance ?? (form.seniorityAllowance === 0 ? "" : String(form.seniorityAllowance))}
-                        onChange={(e) => updateDecimal("seniorityAllowance", e.target.value)}
+                        value={
+                          displayStrs.seniorityAllowance ??
+                          (form.seniorityAllowance === 0
+                            ? ""
+                            : String(form.seniorityAllowance))
+                        }
+                        onChange={(e) =>
+                          updateDecimal("seniorityAllowance", e.target.value)
+                        }
                         className="rounded-xl"
                       />
                     </div>
@@ -639,8 +709,18 @@ export default function EmployeeEditPage() {
                       <Input
                         type="text"
                         inputMode="decimal"
-                        value={displayStrs.teachingSeniorityPercent ?? (form.teachingSeniorityPercent == null ? "" : String(form.teachingSeniorityPercent * 100))}
-                        onChange={(e) => updatePercent("teachingSeniorityPercent", e.target.value)}
+                        value={
+                          displayStrs.teachingSeniorityPercent ??
+                          (form.teachingSeniorityPercent == null
+                            ? ""
+                            : String(form.teachingSeniorityPercent * 100))
+                        }
+                        onChange={(e) =>
+                          updatePercent(
+                            "teachingSeniorityPercent",
+                            e.target.value,
+                          )
+                        }
                         className="rounded-xl"
                       />
                     </div>
@@ -649,12 +729,19 @@ export default function EmployeeEditPage() {
 
                 {!isBienChe && (
                   <div className="space-y-2 sm:col-span-2">
-                    <Label>Lương gộp (VNĐ) — nhập trực nếu không dùng hệ số</Label>
+                    <Label>
+                      Lương gộp (VNĐ) — nhập trực nếu không dùng hệ số
+                    </Label>
                     <Input
                       type="number"
                       min={0}
                       value={form.grossSalaryOverride || ""}
-                      onChange={(e) => update("grossSalaryOverride", Number(e.target.value) || 0)}
+                      onChange={(e) =>
+                        update(
+                          "grossSalaryOverride",
+                          Number(e.target.value) || 0,
+                        )
+                      }
                       className="rounded-xl"
                     />
                   </div>
@@ -666,7 +753,9 @@ export default function EmployeeEditPage() {
                     type="number"
                     min={0}
                     value={form.sickDeduction || ""}
-                    onChange={(e) => update("sickDeduction", Number(e.target.value) || 0)}
+                    onChange={(e) =>
+                      update("sickDeduction", Number(e.target.value) || 0)
+                    }
                     className="rounded-xl"
                   />
                 </div>
@@ -675,7 +764,9 @@ export default function EmployeeEditPage() {
                   <Label>Cách tính BHXH</Label>
                   <RadioGroup
                     value={form.insuranceMode}
-                    onValueChange={(v) => update("insuranceMode", v as "percent" | "fixed")}
+                    onValueChange={(v) =>
+                      update("insuranceMode", v as "percent" | "fixed")
+                    }
                     className="flex gap-4"
                   >
                     <label className="flex items-center gap-2 cursor-pointer">
@@ -694,8 +785,15 @@ export default function EmployeeEditPage() {
                     <Input
                       type="text"
                       inputMode="decimal"
-                      value={displayStrs.insurancePercent ?? (form.insurancePercent == null ? "" : String(form.insurancePercent * 100))}
-                      onChange={(e) => updatePercent("insurancePercent", e.target.value)}
+                      value={
+                        displayStrs.insurancePercent ??
+                        (form.insurancePercent == null
+                          ? ""
+                          : String(form.insurancePercent * 100))
+                      }
+                      onChange={(e) =>
+                        updatePercent("insurancePercent", e.target.value)
+                      }
                       className="rounded-xl"
                     />
                   </div>
@@ -706,7 +804,12 @@ export default function EmployeeEditPage() {
                       type="number"
                       min={0}
                       value={form.insuranceFixedAmount || ""}
-                      onChange={(e) => update("insuranceFixedAmount", Number(e.target.value) || 0)}
+                      onChange={(e) =>
+                        update(
+                          "insuranceFixedAmount",
+                          Number(e.target.value) || 0,
+                        )
+                      }
                       className="rounded-xl"
                     />
                   </div>
@@ -726,36 +829,52 @@ export default function EmployeeEditPage() {
               {/* Xem trước tính lương (sau khi đã có profile / sau khi lưu) */}
               {computed && (
                 <div className="rounded-2xl border border-stone-200 bg-stone-50 p-5">
-                  <p className="mb-4 font-medium text-stone-900">Tổng hợp tính lương (xem trước)</p>
+                  <p className="mb-4 font-medium text-stone-900">
+                    Tổng hợp tính lương (xem trước)
+                  </p>
                   <div className="space-y-3 text-sm">
                     {isBienChe && (
                       <>
                         <div className="flex justify-between">
                           <span className="text-stone-500">Hệ số TNNG</span>
-                          <span className="font-medium">{computed.teachingSeniorityValue.toFixed(4)}</span>
+                          <span className="font-medium">
+                            {computed.teachingSeniorityValue.toFixed(4)}
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-stone-500">Cộng hệ số</span>
-                          <span className="font-medium">{computed.totalCoefficient.toFixed(4)}</span>
+                          <span className="font-medium">
+                            {computed.totalCoefficient.toFixed(4)}
+                          </span>
                         </div>
                       </>
                     )}
                     <div className="flex justify-between">
-                      <span className="text-stone-500">Thành tiền / Lương gộp</span>
-                      <span className="font-medium">{dinhDangTien(computed.grossSalary)}</span>
+                      <span className="text-stone-500">
+                        Thành tiền / Lương gộp
+                      </span>
+                      <span className="font-medium">
+                        {dinhDangTien(computed.grossSalary)}
+                      </span>
                     </div>
                     <div className="flex justify-between text-rose-600">
                       <span>BHXH / BHYT / BHTN</span>
-                      <span className="font-medium">-{dinhDangTien(computed.insuranceAmount)}</span>
+                      <span className="font-medium">
+                        -{dinhDangTien(computed.insuranceAmount)}
+                      </span>
                     </div>
                     <div className="flex justify-between text-rose-600">
                       <span>Trừ ốm đau, nghỉ sinh</span>
-                      <span className="font-medium">-{dinhDangTien(form.sickDeduction)}</span>
+                      <span className="font-medium">
+                        -{dinhDangTien(form.sickDeduction)}
+                      </span>
                     </div>
                     {computed.otherDeduction > 0 && (
                       <div className="flex justify-between text-rose-600">
                         <span>Trừ các khoản khác (phiếu khấu trừ)</span>
-                        <span className="font-medium">-{dinhDangTien(computed.otherDeduction)}</span>
+                        <span className="font-medium">
+                          -{dinhDangTien(computed.otherDeduction)}
+                        </span>
                       </div>
                     )}
                     <div className="border-t border-dashed border-stone-300 pt-3">
@@ -766,14 +885,16 @@ export default function EmployeeEditPage() {
                     </div>
                   </div>
                   <p className="mt-3 text-xs text-stone-500">
-                    Các giá trị trên cập nhật theo hồ sơ đã lưu. Nhấn &quot;Lưu hồ sơ lương&quot; để áp dụng thay đổi.
+                    Các giá trị trên cập nhật theo hồ sơ đã lưu. Nhấn &quot;Lưu
+                    hồ sơ lương&quot; để áp dụng thay đổi.
                   </p>
                 </div>
               )}
 
               {!profile && (
                 <p className="text-sm text-amber-700 bg-amber-50 rounded-xl px-4 py-3">
-                  Chưa có hồ sơ lương. Điền các ô trên và nhấn &quot;Lưu hồ sơ lương&quot; để tạo.
+                  Chưa có hồ sơ lương. Điền các ô trên và nhấn &quot;Lưu hồ sơ
+                  lương&quot; để tạo.
                 </p>
               )}
             </CardContent>
@@ -788,7 +909,8 @@ export default function EmployeeEditPage() {
                   Phiếu khấu trừ
                 </CardTitle>
                 <p className="text-sm text-stone-500 mt-1">
-                  Các khoản khấu trừ ngoài BHXH. Chỉ xem tại đây; thêm mới bằng nút bên dưới.
+                  Các khoản khấu trừ ngoài BHXH. Chỉ xem tại đây; thêm mới bằng
+                  nút bên dưới.
                 </p>
               </div>
               <Button
@@ -804,7 +926,9 @@ export default function EmployeeEditPage() {
               {loadingDeductions ? (
                 <p className="text-sm text-stone-500">Đang tải...</p>
               ) : deductionsList.length === 0 ? (
-                <p className="text-sm text-stone-500">Chưa có phiếu khấu trừ nào.</p>
+                <p className="text-sm text-stone-500">
+                  Chưa có phiếu khấu trừ nào.
+                </p>
               ) : (
                 <ul className="space-y-3">
                   {deductionsList.map((d) => (
@@ -820,7 +944,11 @@ export default function EmployeeEditPage() {
                         <p className="mt-1 text-xs text-stone-400">
                           Tháng {d.month}/{d.year}
                           {" · "}
-                          {d.status === "applied" ? "Đã áp dụng" : d.status === "draft" ? "Nháp" : "Đã hủy"}
+                          {d.status === "applied"
+                            ? "Đã áp dụng"
+                            : d.status === "draft"
+                              ? "Nháp"
+                              : "Đã hủy"}
                         </p>
                       </div>
                       <span className="font-semibold text-rose-600">
@@ -850,7 +978,9 @@ export default function EmployeeEditPage() {
                   variant="ghost"
                   size="icon"
                   className="rounded-full"
-                  onClick={() => !deductionSubmitting && setDeductionModalOpen(false)}
+                  onClick={() =>
+                    !deductionSubmitting && setDeductionModalOpen(false)
+                  }
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -921,7 +1051,9 @@ export default function EmployeeEditPage() {
                       onChange={(e) =>
                         setNewDeduction((p) => ({
                           ...p,
-                          year: parseInt(e.target.value, 10) || new Date().getFullYear(),
+                          year:
+                            parseInt(e.target.value, 10) ||
+                            new Date().getFullYear(),
                         }))
                       }
                       className="rounded-xl"
@@ -934,7 +1066,10 @@ export default function EmployeeEditPage() {
                     type="date"
                     value={newDeduction.effectiveDate}
                     onChange={(e) =>
-                      setNewDeduction((p) => ({ ...p, effectiveDate: e.target.value }))
+                      setNewDeduction((p) => ({
+                        ...p,
+                        effectiveDate: e.target.value,
+                      }))
                     }
                     className="rounded-xl"
                   />
@@ -943,7 +1078,9 @@ export default function EmployeeEditPage() {
                   <Button
                     variant="outline"
                     className="flex-1 rounded-xl"
-                    onClick={() => !deductionSubmitting && setDeductionModalOpen(false)}
+                    onClick={() =>
+                      !deductionSubmitting && setDeductionModalOpen(false)
+                    }
                     disabled={deductionSubmitting}
                   >
                     Hủy

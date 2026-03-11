@@ -83,7 +83,7 @@ export async function PATCH(
   }
 }
 
-/** Soft delete (default): set isActive = false. Hard delete: ?hard=true — xóa hẳn nhân viên + hồ sơ lương + phiếu khấu trừ. */
+/** Soft delete (default): set isActive = false. Hard delete: ?hard=true — xóa hẳn người lao động + hồ sơ lương + phiếu khấu trừ. */
 export async function DELETE(
   req: NextRequest,
   context: RouteContext

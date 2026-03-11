@@ -44,7 +44,9 @@ export default function EmployeesPage() {
     try {
       const params = new URLSearchParams();
       if (!showInactive) params.set("isActive", "true");
-      const res = await fetch(`/api/employees?${params}`, { credentials: "include" });
+      const res = await fetch(`/api/employees?${params}`, {
+        credentials: "include",
+      });
       const data = await res.json();
       if (data?.success && Array.isArray(data.data)) setList(data.data);
     } finally {
@@ -57,7 +59,12 @@ export default function EmployeesPage() {
   }, [fetchList]);
 
   async function handleDelete(id: string) {
-    if (!confirm("Bạn có chắc muốn ngừng hoạt động nhân viên này? (Soft delete)")) return;
+    if (
+      !confirm(
+        "Bạn có chắc muốn ngừng hoạt động người lao động này? (Soft delete)",
+      )
+    )
+      return;
     setDeletingId(id);
     try {
       const res = await fetch(`/api/employees/${id}`, {
@@ -75,7 +82,7 @@ export default function EmployeesPage() {
   async function handleHardDelete(id: string) {
     if (
       !confirm(
-        "Xóa hẳn nhân viên? Sẽ xóa luôn hồ sơ lương và mọi phiếu khấu trừ. Không thể hoàn tác."
+        "Xóa hẳn người lao động? Sẽ xóa luôn hồ sơ lương và mọi phiếu khấu trừ. Không thể hoàn tác.",
       )
     )
       return;
@@ -99,16 +106,17 @@ export default function EmployeesPage() {
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">
-              Danh sách nhân viên
+              Danh sách người lao động
             </h1>
             <p className="mt-1 text-sm text-stone-500">
-              Tạo mới hoặc ngừng hoạt động nhân viên. Chỉnh sửa hồ sơ lương tại trang từng nhân viên.
+              Tạo mới hoặc ngừng hoạt động người lao động. Chỉnh sửa hồ sơ lương
+              tại trang từng người lao động.
             </p>
           </div>
           <Link href="/employee">
             <Button className="h-11 rounded-2xl bg-stone-900 text-white hover:bg-stone-800 gap-2">
               <UserPlus className="h-4 w-4" />
-              Tạo nhân viên
+              Tạo người lao động
             </Button>
           </Link>
         </div>
@@ -127,7 +135,7 @@ export default function EmployeesPage() {
                   onChange={(e) => setShowInactive(e.target.checked)}
                   className="rounded border-stone-300"
                 />
-                Hiện cả nhân viên đã ngừng hoạt động
+                Hiện cả người lao động đã ngừng hoạt động
               </label>
             </div>
           </CardHeader>
@@ -139,10 +147,10 @@ export default function EmployeesPage() {
             ) : list.length === 0 ? (
               <div className="flex min-h-[200px] flex-col items-center justify-center gap-3 text-stone-500">
                 <Users className="h-12 w-12 text-stone-300" />
-                <p>Chưa có nhân viên nào.</p>
+                <p>Chưa có người lao động nào.</p>
                 <Link href="/employee">
                   <Button variant="outline" className="rounded-2xl">
-                    Tạo nhân viên đầu tiên
+                    Tạo người lao động đầu tiên
                   </Button>
                 </Link>
               </div>
@@ -156,7 +164,9 @@ export default function EmployeesPage() {
                       <th className="px-4 py-3 font-medium">Chức vụ</th>
                       <th className="px-4 py-3 font-medium">Loại hồ sơ</th>
                       <th className="px-4 py-3 font-medium">Trạng thái</th>
-                      <th className="px-4 py-3 text-right font-medium">Thao tác</th>
+                      <th className="px-4 py-3 text-right font-medium">
+                        Thao tác
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -173,10 +183,15 @@ export default function EmployeesPage() {
                             {emp.fullName}
                           </Link>
                         </td>
-                        <td className="px-4 py-3 text-stone-600">{emp.employeeCode}</td>
+                        <td className="px-4 py-3 text-stone-600">
+                          {emp.employeeCode}
+                        </td>
                         <td className="px-4 py-3">{roleLabel(emp.role)}</td>
                         <td className="px-4 py-3">
-                          <Badge variant="secondary" className="rounded-full text-xs">
+                          <Badge
+                            variant="secondary"
+                            className="rounded-full text-xs"
+                          >
                             {emp.employeeType}
                           </Badge>
                         </td>
@@ -184,12 +199,18 @@ export default function EmployeesPage() {
                           {emp.isActive !== false ? (
                             <span className="text-emerald-600">Đang dùng</span>
                           ) : (
-                            <span className="text-stone-400">Ngừng hoạt động</span>
+                            <span className="text-stone-400">
+                              Ngừng hoạt động
+                            </span>
                           )}
                         </td>
                         <td className="px-4 py-3 text-right">
                           <Link href={`/employee/${emp._id}`}>
-                            <Button variant="ghost" size="sm" className="rounded-xl">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="rounded-xl"
+                            >
                               Sửa
                             </Button>
                           </Link>

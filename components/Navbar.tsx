@@ -11,7 +11,10 @@ export function Navbar() {
   if (pathname === "/sign-in") return null;
 
   async function handleSignOut() {
-    await fetch("/api/auth/sign-out", { method: "POST", credentials: "include" });
+    await fetch("/api/auth/sign-out", {
+      method: "POST",
+      credentials: "include",
+    });
     window.location.href = "/sign-in";
   }
 
@@ -31,12 +34,14 @@ export function Navbar() {
           </Link>
           <Link href="/employees">
             <Button
-              variant={pathname.startsWith("/employees") ? "secondary" : "ghost"}
+              variant={
+                pathname.startsWith("/employees") ? "secondary" : "ghost"
+              }
               size="sm"
               className="h-9 rounded-xl gap-2 font-medium"
             >
               <Users className="h-4 w-4" />
-              <span className="hidden sm:inline">Danh sách nhân viên</span>
+              <span className="hidden sm:inline">Danh sách người lao động</span>
             </Button>
           </Link>
         </div>

@@ -87,10 +87,10 @@ const trangThaiLoaiHoSo = {
 
 const goiYTheoLoaiHoSo: Record<LoaiHoSo, string[]> = {
   "bien-che": [
-    "Tên nhân viên",
+    "Tên người lao động",
     "Chức vụ",
     "Loại hồ sơ biên chế",
-    "Mã nhân viên nếu có",
+    "Mã người lao động nếu có",
     "Sau khi tạo sẽ vào trang chỉnh hệ số lương và phụ cấp",
   ],
   "hop-dong": [
@@ -174,7 +174,7 @@ export default function TaoHoSoNhanVienPage() {
       return;
     }
     if (!form.maNhanVien?.trim()) {
-      setError("Vui lòng nhập mã nhân viên.");
+      setError("Vui lòng nhập mã người lao động.");
       return;
     }
     setSaving(true);
@@ -224,10 +224,10 @@ export default function TaoHoSoNhanVienPage() {
                 <div className="max-w-3xl">
                   <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs text-stone-200">
                     <FilePlus2 className="h-3.5 w-3.5" />
-                    Trang tạo hồ sơ nhân viên mới
+                    Trang tạo hồ sơ người lao động mới
                   </div>
                   <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-                    Tạo hồ sơ nhân viên trước, chỉnh lương sau
+                    Tạo hồ sơ người lao động trước, chỉnh lương sau
                   </h1>
                   <p className="mt-3 text-sm leading-6 text-stone-300 md:text-base">
                     Trang này chỉ tập trung tạo hồ sơ cơ bản như tên, chức vụ,
@@ -289,7 +289,7 @@ export default function TaoHoSoNhanVienPage() {
                     href="/nhan-vien"
                     className="flex w-full items-center justify-center"
                   >
-                    Về danh sách nhân viên
+                    Về danh sách người lao động
                   </Link>
                 </Button>
               </div>
@@ -352,7 +352,7 @@ export default function TaoHoSoNhanVienPage() {
                 ) : (
                   <p className="mt-3 text-sm text-stone-500">
                     Chọn chức vụ hoặc loại hồ sơ để hệ thống gợi ý đúng luồng
-                    tạo nhân viên.
+                    tạo người lao động.
                   </p>
                 )}
               </div>
@@ -376,7 +376,7 @@ export default function TaoHoSoNhanVienPage() {
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <CardTitle className="text-xl">
-                    Biểu mẫu tạo hồ sơ nhân viên
+                    Biểu mẫu tạo hồ sơ người lao động
                   </CardTitle>
                   <p className="mt-1 text-sm text-stone-500">
                     Nhập thông tin cơ bản trước. Sau khi lưu hồ sơ, điều hướng
@@ -415,7 +415,7 @@ export default function TaoHoSoNhanVienPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="maNhanVien">Mã nhân viên</Label>
+                  <Label htmlFor="maNhanVien">Mã người lao động</Label>
                   <Input
                     id="maNhanVien"
                     className="h-11 rounded-2xl"
@@ -566,7 +566,7 @@ export default function TaoHoSoNhanVienPage() {
                   disabled={saving}
                 >
                   <Save className="mr-2 h-4 w-4" />
-                  {saving ? "Đang tạo..." : "Tạo hồ sơ nhân viên"}
+                  {saving ? "Đang tạo..." : "Tạo hồ sơ người lao động"}
                 </Button>
 
                 <Button
