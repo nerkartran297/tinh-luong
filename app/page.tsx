@@ -423,7 +423,7 @@ export default function Page() {
       const batDauDuLieu = 9;
 
       const danhSachChoExcel = [...danhSachLoc].sort(
-        (a, b) => roleSortIndex(a.role) - roleSortIndex(b.role)
+        (a, b) => roleSortIndex(a.role) - roleSortIndex(b.role),
       );
 
       const bienCheRows: number[] = [];
@@ -473,7 +473,21 @@ export default function Page() {
       });
 
       const dataEndRow = batDauDuLieu + danhSachChoExcel.length - 1;
-      const sumCols = ["D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "O", "P", "Q"];
+      const sumCols = [
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "K",
+        "L",
+        "M",
+        "N",
+        "O",
+        "P",
+        "Q",
+      ];
 
       function sumRange(col: string, rowNums: number[]): string {
         if (rowNums.length === 0) return "0";
@@ -486,32 +500,50 @@ export default function Page() {
 
       if (bienCheRows.length > 0) {
         ws.mergeCells(`A${subtotalRow}:C${subtotalRow}`);
-        ws.getCell(`A${subtotalRow}`).value = "Tổng cộng I";
+        ws.getCell(`A${subtotalRow}`).value = "Tổng cộng I (Biên chế)";
         sumCols.forEach((col) => {
-          ws.getCell(`${col}${subtotalRow}`).value = { formula: sumRange(col, bienCheRows) };
+          ws.getCell(`${col}${subtotalRow}`).value = {
+            formula: sumRange(col, bienCheRows),
+          };
         });
         ws.getRow(subtotalRow).font = { bold: true };
-        ws.getRow(subtotalRow).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFEEEEEE" } };
+        ws.getRow(subtotalRow).fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "FFEEEEEE" },
+        };
         subtotalRow++;
       }
       if (hopDongRows.length > 0) {
         ws.mergeCells(`A${subtotalRow}:C${subtotalRow}`);
-        ws.getCell(`A${subtotalRow}`).value = "Tổng cộng II";
+        ws.getCell(`A${subtotalRow}`).value = "Tổng cộng II (Giáo viên HĐ)";
         sumCols.forEach((col) => {
-          ws.getCell(`${col}${subtotalRow}`).value = { formula: sumRange(col, hopDongRows) };
+          ws.getCell(`${col}${subtotalRow}`).value = {
+            formula: sumRange(col, hopDongRows),
+          };
         });
         ws.getRow(subtotalRow).font = { bold: true };
-        ws.getRow(subtotalRow).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFEEEEEE" } };
+        ws.getRow(subtotalRow).fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "FFEEEEEE" },
+        };
         subtotalRow++;
       }
       if (baoVeRows.length > 0) {
         ws.mergeCells(`A${subtotalRow}:C${subtotalRow}`);
-        ws.getCell(`A${subtotalRow}`).value = "Tổng cộng III";
+        ws.getCell(`A${subtotalRow}`).value = "Tổng cộng III (Bảo vệ HĐ)";
         sumCols.forEach((col) => {
-          ws.getCell(`${col}${subtotalRow}`).value = { formula: sumRange(col, baoVeRows) };
+          ws.getCell(`${col}${subtotalRow}`).value = {
+            formula: sumRange(col, baoVeRows),
+          };
         });
         ws.getRow(subtotalRow).font = { bold: true };
-        ws.getRow(subtotalRow).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFEEEEEE" } };
+        ws.getRow(subtotalRow).fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "FFEEEEEE" },
+        };
         subtotalRow++;
       }
 
