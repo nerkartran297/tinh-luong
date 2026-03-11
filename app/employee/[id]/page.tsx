@@ -134,7 +134,7 @@ export default function EmployeeEditPage() {
   const [profile, setProfile] = useState<ProfilePayload | null>(null);
   const [form, setForm] = useState<ProfileForm>(defaultProfile);
   const [displayStrs, setDisplayStrs] = useState<Partial<Record<string, string>>>({});
-  const [preferentialPercent, setPreferentialPercent] = useState<50 | 70>(50);
+  const [preferentialPercent, setPreferentialPercent] = useState<0 | 50 | 70>(50);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -176,8 +176,11 @@ export default function EmployeeEditPage() {
           const val50 = 0.5 * base;
           const val70 = 0.7 * base;
           const stored = nextForm.preferentialAllowance ?? 0;
+          const d0 = Math.abs(stored - 0);
+          const d50 = Math.abs(stored - val50);
+          const d70 = Math.abs(stored - val70);
           setPreferentialPercent(
-            Math.abs(stored - val50) <= Math.abs(stored - val70) ? 50 : 70
+            d0 <= d50 && d0 <= d70 ? 0 : d50 <= d70 ? 50 : 70
           );
           setDisplayStrs({
             salaryCoefficient:
@@ -337,8 +340,11 @@ export default function EmployeeEditPage() {
         const val50 = 0.5 * base;
         const val70 = 0.7 * base;
         const stored = nextForm.preferentialAllowance ?? 0;
+        const d0 = Math.abs(stored - 0);
+        const d50 = Math.abs(stored - val50);
+        const d70 = Math.abs(stored - val70);
         setPreferentialPercent(
-          Math.abs(stored - val50) <= Math.abs(stored - val70) ? 50 : 70
+          d0 <= d50 && d0 <= d70 ? 0 : d50 <= d70 ? 50 : 70
         );
         setDisplayStrs({
           salaryCoefficient:
@@ -408,7 +414,7 @@ export default function EmployeeEditPage() {
     }
   }
 
-  function setPreferentialAndUpdate(p: 50 | 70) {
+  function setPreferentialAndUpdate(p: 0 | 50 | 70) {
     setPreferentialPercent(p);
     const base =
       (form.salaryCoefficient ?? 0) +
@@ -588,17 +594,25 @@ export default function EmployeeEditPage() {
                           (form.salaryCoefficient ?? 0) +
                           (form.positionAllowance ?? 0) +
                           (form.pctnvk ?? 0);
+                        const preview0 = (0 * base).toFixed(4);
                         const preview50 = (0.5 * base).toFixed(4);
                         const preview70 = (0.7 * base).toFixed(4);
                         return (
                           <Select
                             value={String(preferentialPercent)}
-                            onValueChange={(v) => setPreferentialAndUpdate(v === "70" ? 70 : 50)}
+                            onValueChange={(v) =>
+                              setPreferentialAndUpdate(
+                                v === "0" ? 0 : v === "70" ? 70 : 50
+                              )
+                            }
                           >
                             <SelectTrigger className="w-full rounded-xl">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
+                              <SelectItem value="0">
+                                0% — {preview0}
+                              </SelectItem>
                               <SelectItem value="50">
                                 50% — {preview50}
                               </SelectItem>
