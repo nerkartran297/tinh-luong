@@ -151,7 +151,7 @@ export default function EmployeesPage() {
                   onChange={(e) => setShowInactive(e.target.checked)}
                   className="rounded border-stone-300"
                 />
-                Hiện cả người lao động đã ngừng hoạt động
+                Hiện người lao động đã ngừng hoạt động
               </label>
             </div>
           </CardHeader>
@@ -188,80 +188,83 @@ export default function EmployeesPage() {
                   <tbody>
                     {[...list]
                       .sort((a, b) => {
-                        const byRole = roleSortIndex(a.role) - roleSortIndex(b.role);
+                        const byRole =
+                          roleSortIndex(a.role) - roleSortIndex(b.role);
                         if (byRole !== 0) return byRole;
                         return a.fullName.localeCompare(b.fullName, "vi");
                       })
                       .map((emp) => (
-                      <tr
-                        key={emp._id}
-                        className="border-b border-stone-100 hover:bg-stone-50/50"
-                      >
-                        <td className="px-4 py-3">
-                          <Link
-                            href={`/employee/${emp._id}`}
-                            className="font-medium text-stone-900 hover:underline"
-                          >
-                            {emp.fullName}
-                          </Link>
-                        </td>
-                        <td className="px-4 py-3 text-stone-600">
-                          {emp.employeeCode}
-                        </td>
-                        <td className="px-4 py-3">{roleLabel(emp.role)}</td>
-                        <td className="px-4 py-3">
-                          <Badge
-                            variant="secondary"
-                            className="rounded-full text-xs"
-                          >
-                            {emp.employeeType}
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3">
-                          {emp.isActive !== false ? (
-                            <span className="text-emerald-600">Đang dùng</span>
-                          ) : (
-                            <span className="text-stone-400">
-                              Ngừng hoạt động
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          <Link href={`/employee/${emp._id}`}>
+                        <tr
+                          key={emp._id}
+                          className="border-b border-stone-100 hover:bg-stone-50/50"
+                        >
+                          <td className="px-4 py-3">
+                            <Link
+                              href={`/employee/${emp._id}`}
+                              className="font-medium text-stone-900 hover:underline"
+                            >
+                              {emp.fullName}
+                            </Link>
+                          </td>
+                          <td className="px-4 py-3 text-stone-600">
+                            {emp.employeeCode}
+                          </td>
+                          <td className="px-4 py-3">{roleLabel(emp.role)}</td>
+                          <td className="px-4 py-3">
+                            <Badge
+                              variant="secondary"
+                              className="rounded-full text-xs"
+                            >
+                              {emp.employeeType}
+                            </Badge>
+                          </td>
+                          <td className="px-4 py-3">
+                            {emp.isActive !== false ? (
+                              <span className="text-emerald-600">
+                                Đang dùng
+                              </span>
+                            ) : (
+                              <span className="text-stone-400">
+                                Ngừng hoạt động
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <Link href={`/employee/${emp._id}`}>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="rounded-xl"
+                              >
+                                Sửa
+                              </Button>
+                            </Link>
+                            {emp.isActive !== false && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="rounded-xl text-rose-600 hover:text-rose-700 hover:bg-rose-50"
+                                onClick={() => handleDelete(emp._id)}
+                                disabled={deletingId === emp._id}
+                              >
+                                <Trash2 className="h-4 w-4 mr-1" />
+                                {deletingId === emp._id ? "..." : "Ngừng HĐ"}
+                              </Button>
+                            )}
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="rounded-xl"
+                              className="rounded-xl text-rose-700 hover:bg-rose-100 hover:text-rose-800"
+                              onClick={() => handleHardDelete(emp._id)}
+                              disabled={deletingHardId === emp._id}
+                              title="Xóa hẳn khỏi hệ thống (không hoàn tác được)"
                             >
-                              Sửa
+                              <AlertTriangle className="h-4 w-4 mr-1" />
+                              {deletingHardId === emp._id ? "..." : "Xóa hẳn"}
                             </Button>
-                          </Link>
-                          {emp.isActive !== false && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="rounded-xl text-rose-600 hover:text-rose-700 hover:bg-rose-50"
-                              onClick={() => handleDelete(emp._id)}
-                              disabled={deletingId === emp._id}
-                            >
-                              <Trash2 className="h-4 w-4 mr-1" />
-                              {deletingId === emp._id ? "..." : "Ngừng HĐ"}
-                            </Button>
-                          )}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="rounded-xl text-rose-700 hover:bg-rose-100 hover:text-rose-800"
-                            onClick={() => handleHardDelete(emp._id)}
-                            disabled={deletingHardId === emp._id}
-                            title="Xóa hẳn khỏi hệ thống (không hoàn tác được)"
-                          >
-                            <AlertTriangle className="h-4 w-4 mr-1" />
-                            {deletingHardId === emp._id ? "..." : "Xóa hẳn"}
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
