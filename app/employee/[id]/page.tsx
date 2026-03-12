@@ -55,7 +55,7 @@ type ProfileForm = {
   preferentialAllowance: number;
   seniorityAllowance: number;
   teachingSeniorityPercent: number;
-  insuranceMode: "percent" | "fixed";
+  insuranceMode: "percent" | "fixed" | "auto-hd";
   insurancePercent: number;
   insuranceFixedAmount: number;
   grossSalaryOverride: number;
@@ -118,7 +118,7 @@ function toForm(p: ProfilePayload | null): ProfileForm {
     preferentialAllowance: Number(p.preferentialAllowance) ?? 0,
     seniorityAllowance: Number(p.seniorityAllowance) ?? 0,
     teachingSeniorityPercent: Number(p.teachingSeniorityPercent) ?? 0,
-    insuranceMode: p.insuranceMode === "fixed" ? "fixed" : "percent",
+    insuranceMode: p.insuranceMode === "fixed" ? "fixed" : p.insuranceMode === "auto-hd" ? "auto-hd" : "percent",
     insurancePercent: Number(p.insurancePercent) ?? 0,
     insuranceFixedAmount: Number(p.insuranceFixedAmount) ?? 0,
     grossSalaryOverride: Number(p.grossSalaryOverride) ?? 0,
@@ -765,9 +765,9 @@ export default function EmployeeEditPage() {
                   <RadioGroup
                     value={form.insuranceMode}
                     onValueChange={(v) =>
-                      update("insuranceMode", v as "percent" | "fixed")
+                      update("insuranceMode", v as "percent" | "fixed" | "auto-hd")
                     }
-                    className="flex gap-4"
+                    className="flex flex-wrap gap-4"
                   >
                     <label className="flex items-center gap-2 cursor-pointer">
                       <RadioGroupItem value="percent" />
@@ -777,7 +777,21 @@ export default function EmployeeEditPage() {
                       <RadioGroupItem value="fixed" />
                       <span>Số tiền cố định</span>
                     </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <RadioGroupItem value="auto-hd" />
+                      <span>Tự động HĐ (3.700.000 × 32% = 1.184.000 VND)</span>
+                    </label>
                   </RadioGroup>
+                  {form.insuranceMode === "auto-hd" && !isBienChe && (
+                    <p className="text-xs text-stone-500">
+                      Áp dụng cho giáo viên HĐ và bảo vệ: mức BHXH cố định 1.184.000 VND/tháng.
+                    </p>
+                  )}
+                  {form.insuranceMode === "auto-hd" && isBienChe && (
+                    <p className="text-xs text-stone-500">
+                      Biên chế chọn &quot;Tự động HĐ&quot; sẽ không trừ BHXH (0). Chỉ HĐ/bảo vệ mới dùng mức 1.184.000 VND.
+                    </p>
+                  )}
                 </div>
                 {form.insuranceMode === "percent" ? (
                   <div className="space-y-2">
@@ -797,7 +811,7 @@ export default function EmployeeEditPage() {
                       className="rounded-xl"
                     />
                   </div>
-                ) : (
+                ) : form.insuranceMode === "fixed" ? (
                   <div className="space-y-2">
                     <Label>Số tiền BHXH cố định (VNĐ)</Label>
                     <Input
@@ -813,7 +827,7 @@ export default function EmployeeEditPage() {
                       className="rounded-xl"
                     />
                   </div>
-                )}
+                ) : null}
 
                 <div className="space-y-2 sm:col-span-2 lg:col-span-3">
                   <Label>Ghi chú</Label>

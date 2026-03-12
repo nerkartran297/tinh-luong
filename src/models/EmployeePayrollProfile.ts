@@ -38,7 +38,7 @@ const EmployeePayrollProfileSchema = new Schema<IEmployeePayrollProfile>(
     preferentialAllowance: { type: Number, default: 0 },
     seniorityAllowance: { type: Number, default: 0 },
     teachingSeniorityPercent: { type: Number, default: 0 },
-    insuranceMode: { type: String, required: true, enum: ["percent", "fixed"] },
+    insuranceMode: { type: String, required: true, enum: ["percent", "fixed", "auto-hd"] },
     insurancePercent: { type: Number, default: 0 },
     insuranceFixedAmount: { type: Number, default: 0 },
     grossSalaryOverride: { type: Number },

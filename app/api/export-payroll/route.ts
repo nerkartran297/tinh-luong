@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import ExcelJS from "exceljs";
 
-type InsuranceMode = "percent" | "fixed";
+type InsuranceMode = "percent" | "fixed" | "auto-hd";
 
 type PayrollEmployee = {
   id: string;
@@ -56,6 +56,11 @@ function roleSortIndex(role: string): number {
 function getInsuranceAmount(emp: PayrollEmployee) {
   if (emp.insuranceMode === "fixed") {
     return emp.insuranceFixedAmount ?? 0;
+  }
+  if (emp.insuranceMode === "auto-hd") {
+    return (emp.employeeType === "hop_dong" || emp.employeeType === "bao_ve")
+      ? 3_700_000 * 0.32
+      : 0;
   }
 
   const percent = emp.insurancePercent ?? 0;

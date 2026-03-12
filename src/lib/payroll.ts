@@ -71,7 +71,9 @@ export function calculateGrossSalary(
   );
 }
 
-/** BHXH: fixed => insuranceFixedAmount; percent => nền theo quy định (biên chế vs hợp đồng/bảo vệ) */
+/** BHXH: fixed => insuranceFixedAmount; percent => nền theo quy định; auto-hd => 3.700.000×32%=1.184.000 cho HĐ/bảo vệ */
+const INSURANCE_AUTO_HD_AMOUNT = 3_700_000 * 0.32; // 1_184_000
+
 export function calculateInsuranceAmount(
   profile: PayrollProfileInput,
   employeeType: EmployeeType,
@@ -80,6 +82,11 @@ export function calculateInsuranceAmount(
   const mode: InsuranceMode = profile.insuranceMode ?? "percent";
   if (mode === "fixed") {
     return profile.insuranceFixedAmount ?? 0;
+  }
+  if (mode === "auto-hd") {
+    return (employeeType === "hop-dong" || employeeType === "bao-ve")
+      ? INSURANCE_AUTO_HD_AMOUNT
+      : 0;
   }
   const percent = profile.insurancePercent ?? 0;
   if (employeeType === "bien-che") {

@@ -18,7 +18,7 @@ export const ROLES = [
 ] as const;
 export type Role = (typeof ROLES)[number];
 
-export const INSURANCE_MODES = ["percent", "fixed"] as const;
+export const INSURANCE_MODES = ["percent", "fixed", "auto-hd"] as const;
 export type InsuranceMode = (typeof INSURANCE_MODES)[number];
 
 export const DEDUCTION_VOUCHER_STATUSES = ["draft", "applied", "cancelled"] as const;
