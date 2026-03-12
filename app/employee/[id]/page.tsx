@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Save, Plus, X, Receipt } from "lucide-react";
+import { ArrowLeft, Save, Plus, X, Receipt, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -145,6 +145,7 @@ export default function EmployeeEditPage() {
   const [deductionsList, setDeductionsList] = useState<DeductionVoucher[]>([]);
   const [loadingDeductions, setLoadingDeductions] = useState(false);
   const [deductionModalOpen, setDeductionModalOpen] = useState(false);
+  const [editingDeductionId, setEditingDeductionId] = useState<string | null>(null);
   const [deductionSubmitting, setDeductionSubmitting] = useState(false);
   const [newDeduction, setNewDeduction] = useState({
     title: "",
@@ -274,36 +275,107 @@ export default function EmployeeEditPage() {
       year: now.getFullYear(),
       effectiveDate: now.toISOString().slice(0, 10),
     });
+    setEditingDeductionId(null);
     setDeductionModalOpen(true);
+  }
+
+  function openEditDeductionModal(d: DeductionVoucher) {
+    const effDate = d.effectiveDate
+      ? new Date(d.effectiveDate).toISOString().slice(0, 10)
+      : new Date().toISOString().slice(0, 10);
+    setNewDeduction({
+      title: d.title,
+      amount: String(d.amount),
+      reason: d.reason ?? "",
+      month: d.month,
+      year: d.year,
+      effectiveDate: effDate,
+    });
+    setEditingDeductionId(d._id);
+    setDeductionModalOpen(true);
+  }
+
+  function closeDeductionModal() {
+    if (deductionSubmitting) return;
+    setDeductionModalOpen(false);
+    setEditingDeductionId(null);
   }
 
   async function submitNewDeduction() {
     const title = newDeduction.title.trim();
     const amount = parseInt(String(newDeduction.amount).replace(/\D/g, ""), 10);
     if (!title || Number.isNaN(amount) || amount < 0) return;
-    if (!id) return;
     setDeductionSubmitting(true);
     try {
-      const res = await fetch(`/api/employees/${id}/deductions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      if (editingDeductionId) {
+        const res = await fetch(`/api/deductions/${editingDeductionId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            title,
+            amount,
+            reason: newDeduction.reason.trim() || undefined,
+            month: newDeduction.month,
+            year: newDeduction.year,
+            effectiveDate: new Date(newDeduction.effectiveDate).toISOString(),
+          }),
+        });
+        const data = await res.json();
+        if (data?.success) {
+          closeDeductionModal();
+          fetchDeductions();
+          refetchProfile();
+        } else {
+          setError(data?.message || "Cập nhật phiếu khấu trừ thất bại.");
+        }
+      } else {
+        if (!id) return;
+        const res = await fetch(`/api/employees/${id}/deductions`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            title,
+            amount,
+            reason: newDeduction.reason.trim() || undefined,
+            month: newDeduction.month,
+            year: newDeduction.year,
+            effectiveDate: new Date(newDeduction.effectiveDate).toISOString(),
+          }),
+        });
+        const data = await res.json();
+        if (data?.success) {
+          closeDeductionModal();
+          fetchDeductions();
+          refetchProfile();
+        } else {
+          setError(data?.message || "Tạo phiếu khấu trừ thất bại.");
+        }
+      }
+    } catch {
+      setError("Lỗi kết nối.");
+    } finally {
+      setDeductionSubmitting(false);
+    }
+  }
+
+  async function deleteDeductionInModal() {
+    if (!editingDeductionId) return;
+    if (!confirm("Bạn có chắc muốn xóa phiếu khấu trừ này? Không thể hoàn tác.")) return;
+    setDeductionSubmitting(true);
+    try {
+      const res = await fetch(`/api/deductions/${editingDeductionId}`, {
+        method: "DELETE",
         credentials: "include",
-        body: JSON.stringify({
-          title,
-          amount,
-          reason: newDeduction.reason.trim() || undefined,
-          month: newDeduction.month,
-          year: newDeduction.year,
-          effectiveDate: new Date(newDeduction.effectiveDate).toISOString(),
-        }),
       });
       const data = await res.json();
-      if (data?.success) {
-        setDeductionModalOpen(false);
+      if (data?.success ?? data?.deleted) {
+        closeDeductionModal();
         fetchDeductions();
         refetchProfile();
       } else {
-        setError(data?.message || "Tạo phiếu khấu trừ thất bại.");
+        setError(data?.message || "Xóa phiếu khấu trừ thất bại.");
       }
     } catch {
       setError("Lỗi kết nối.");
@@ -965,9 +1037,21 @@ export default function EmployeeEditPage() {
                               : "Đã hủy"}
                         </p>
                       </div>
-                      <span className="font-semibold text-rose-600">
-                        -{dinhDangTien(d.amount)}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-rose-600">
+                          -{dinhDangTien(d.amount)}
+                        </span>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="rounded-xl h-8 w-8 p-0 shrink-0"
+                          onClick={() => openEditDeductionModal(d)}
+                          title="Chỉnh sửa phiếu"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -980,21 +1064,21 @@ export default function EmployeeEditPage() {
         {deductionModalOpen && (
           <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-            onClick={() => !deductionSubmitting && setDeductionModalOpen(false)}
+            onClick={closeDeductionModal}
           >
             <Card
               className="w-full max-w-md rounded-2xl shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                <CardTitle className="text-lg">Thêm phiếu khấu trừ</CardTitle>
+                <CardTitle className="text-lg">
+                  {editingDeductionId ? "Chỉnh sửa phiếu khấu trừ" : "Thêm phiếu khấu trừ"}
+                </CardTitle>
                 <Button
                   variant="ghost"
                   size="icon"
                   className="rounded-full"
-                  onClick={() =>
-                    !deductionSubmitting && setDeductionModalOpen(false)
-                  }
+                  onClick={closeDeductionModal}
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -1089,12 +1173,22 @@ export default function EmployeeEditPage() {
                   />
                 </div>
                 <div className="flex gap-3 pt-2">
+                  {editingDeductionId ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="rounded-xl border-rose-200 text-rose-700 hover:bg-rose-50 hover:text-rose-800"
+                      onClick={deleteDeductionInModal}
+                      disabled={deductionSubmitting}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Xóa phiếu
+                    </Button>
+                  ) : null}
                   <Button
                     variant="outline"
                     className="flex-1 rounded-xl"
-                    onClick={() =>
-                      !deductionSubmitting && setDeductionModalOpen(false)
-                    }
+                    onClick={closeDeductionModal}
                     disabled={deductionSubmitting}
                   >
                     Hủy
@@ -1108,7 +1202,13 @@ export default function EmployeeEditPage() {
                       !newDeduction.amount.replace(/\D/g, "")
                     }
                   >
-                    {deductionSubmitting ? "Đang tạo..." : "Tạo phiếu"}
+                    {deductionSubmitting
+                      ? editingDeductionId
+                        ? "Đang lưu..."
+                        : "Đang tạo..."
+                      : editingDeductionId
+                        ? "Lưu thay đổi"
+                        : "Tạo phiếu"}
                   </Button>
                 </div>
               </CardContent>
