@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const employees: PayrollEmployee[] = body.employees ?? [];
   const month = body.month ?? 3;
-  const year = body.year ?? 2026;
+  const year = body.year ?? 2025;
   const salaryBase = body.salaryBase ?? 2340000;
 
   const workbook = new ExcelJS.Workbook();

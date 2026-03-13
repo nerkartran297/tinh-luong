@@ -15,7 +15,7 @@ const previewQuerySchema = z.object({
   employeeType: z.enum(["bien-che", "hop-dong", "bao-ve"]).optional(),
 });
 
-/** GET /api/payroll/preview?month=3&year=2026 - returns payroll preview rows */
+/** GET /api/payroll/preview?month=3&year=2025 - returns payroll preview rows */
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);

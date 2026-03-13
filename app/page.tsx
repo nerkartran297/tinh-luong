@@ -341,7 +341,7 @@ export default function Page() {
       ];
 
       ws.mergeCells("A2:R2");
-      ws.getCell("A2").value = "TRƯỜNG MẪU GIÁO - BẢNG LƯƠNG THÁNG 03 NĂM 2026";
+      ws.getCell("A2").value = "TRƯỜNG MẪU GIÁO - BẢNG LƯƠNG THÁNG 03 NĂM 2025";
       ws.getCell("A2").font = { bold: true, size: 14 };
       ws.getCell("A2").alignment = { horizontal: "center", vertical: "middle" };
 
@@ -605,7 +605,7 @@ export default function Page() {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
 
-      saveAs(blob, "bang-luong-thang-03-2026.xlsx");
+      saveAs(blob, "bang-luong-thang-03-2025.xlsx");
     } finally {
       setDangTaiExcel(false);
     }
@@ -963,7 +963,7 @@ export default function Page() {
                     <div className="max-w-3xl">
                       <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs text-stone-200">
                         <FileSpreadsheet className="h-3.5 w-3.5" /> Bảng điều
-                        khiển lương tháng 03/2026
+                        khiển lương tháng 03/2025
                       </div>
                       <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
                         Giao diện quản lý lương trường học theo nhóm nhân sự
